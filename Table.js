@@ -66,7 +66,7 @@ class Table {
         return new Promise(function(res, rej) {
             let finishFunction = function(error, results) {
                 if(error) return rej(error);
-                if(results.insertId != null) th[th.id_field] = results.insertId;
+                if(th[th.id_field] !== undefined && results.insertId != null) th[th.id_field] = results.insertId;
                 res();
             };
             if(th[th.id_field] === undefined) {
