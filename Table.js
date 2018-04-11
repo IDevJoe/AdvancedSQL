@@ -6,6 +6,7 @@ class Table {
         this.name = name;
         this.cols = [];
         this.id_field = "id";
+        this.v = false;
     }
     where(name, symbol, value) {
         let condition = new AdvancedSQL.Condition(name, symbol, value);
@@ -23,6 +24,7 @@ class Table {
                 results.forEach(function(result) {
                     let tbl = new Table(th.name);
                     tbl.id_field = th.id_field;
+                    tbl.v = true;
                     for(let key of Object.keys(result)) {
                         tbl.cols.push(key);
                         tbl[key] = result[key];
@@ -54,19 +56,21 @@ class Table {
                     if(th.cols.indexOf(key) === -1) th.cols.push(key);
                     th[key] = results[0][key];
                 }
+                th.v = true;
                 res();
             });
         });
     }
     valid() {
-        return this[this.id_field] !== undefined;
+        return this.v && this[this.id_field] !== undefined;
     }
     save() {
         let th = this;
         return new Promise(function(res, rej) {
             let finishFunction = function(error, results) {
                 if(error) return rej(error);
-                if(th[th.id_field] !== undefined && results.insertId != null) th[th.id_field] = results.insertId;
+                if(th[th.id_field] === undefined && results.insertId != null) th[th.id_field] = results.insertId;
+                th.v = true;
                 res();
             };
             if(th[th.id_field] === undefined) {
@@ -94,6 +98,7 @@ class Table {
         return new Promise(function(res, rej) {
             AdvancedSQL.connection.query("DELETE FROM "+AdvancedSQL.connection.escapeId(th.name)+" WHERE "+AdvancedSQL.connection.escapeId(th.id_field)+"=?", [th[th.id_field]], function(error) {
                 if(error) return rej(error);
+                th.valid = false;
                 res();
             });
         });
