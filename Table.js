@@ -46,7 +46,7 @@ class Table {
         });
     }
     populate() {
-
+        // Soon(TM) - To update/populate using the ID
     }
     save() {
         let th = this;
@@ -74,6 +74,15 @@ class Table {
                 str = str.substr(2);
                 AdvancedSQL.connection.query("UPDATE "+AdvancedSQL.connection.escapeId(th.name)+" SET "+str+" WHERE "+AdvancedSQL.connection.escapeId(th.id_field)+"=?", [th[th.id_field]], finishFunction);
             }
+        });
+    }
+    delete() {
+        let th = this;
+        return new Promise(function(res, rej) {
+            AdvancedSQL.connection.query("DELETE FROM "+AdvancedSQL.connection.escapeId(th.name)+" WHERE "+AdvancedSQL.connection.escapeId(th.id_field)+"=?", [th[th.id_field]], function(error) {
+                if(error) return rej(error);
+                res();
+            });
         });
     }
 }
