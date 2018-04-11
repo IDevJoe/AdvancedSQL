@@ -23,7 +23,6 @@ class Table {
                 results.forEach(function(result) {
                     let tbl = new Table(th.name);
                     tbl.id_field = th.id_field;
-                    result = JSON.parse(JSON.stringify(result));
                     for(let key of Object.keys(result)) {
                         tbl.cols.push(key);
                         tbl[key] = result[key];
@@ -46,7 +45,21 @@ class Table {
         });
     }
     populate() {
-        // Soon(TM) - To update/populate using the ID
+        let th = this;
+        return new Promise(function(res, rej) {
+            AdvancedSQL.connection.query("SELECT * FROM "+AdvancedSQL.connection.escapeId(th.name)+" WHERE "+AdvancedSQL.connection.escapeId(th.id_field)+"=?", [th[th.id_field]], function(error, results) {
+                if(error) return rej(error);
+                if(results.length !== 1) return res();
+                for(let key of Object.keys(results[0])) {
+                    if(th.cols.indexOf(key) === -1) th.cols.push(key);
+                    th[key] = results[0][key];
+                }
+                res();
+            });
+        });
+    }
+    valid() {
+        return this[this.id_field] !== undefined;
     }
     save() {
         let th = this;
