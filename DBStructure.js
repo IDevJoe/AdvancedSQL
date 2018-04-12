@@ -1,7 +1,13 @@
 class Column {
 	constructor(parent, name, type, length) {
 		this.parent = null;
-		this.coldata = {name: name, type: type, length: length, primary: false, notNull: false, unique: false, getValue: (value) => {}};
+		this.coldata = {name: name, type: type, length: length, primary: false, notNull: false, unique: false};
+	}
+	toDB(value) {
+		return value;
+	}
+	fromDB(value) {
+		return value;
 	}
 	notNull() {
 		this.coldata.notNull = true;
@@ -37,9 +43,25 @@ class DBStructure {
 		this.cols.push(col);
 		return col;
 	}
+	longtext(name) {
+        let col = new Column(this, name, "LONGTEXT");
+        this.cols.push(col);
+        return col;
+	}
+    json(name) {
+        let col = new Column(this, name, "LONGTEXT");
+        col.toDB = function(value) {
+        	return JSON.stringify(value);
+		};
+        col.fromDB = function(value) {
+        	return JSON.parse(value);
+		};
+        this.cols.push(col);
+        return col;
+    }
 	bool(name) {
 		let col = new Column(this, name, "INT", 1);
-		col.doldata.getValue = (value) => {
+		col.toDB = function(value) {
 			switch(value) {
 				case true:
 					return 1;
@@ -48,7 +70,17 @@ class DBStructure {
 				default:
 					return 0;
 			}
-		}
+		};
+		col.fromDB = function(value) {
+            switch(value) {
+                case 1:
+                    return true;
+                case 0:
+                    return false;
+                default:
+                    return false;
+            }
+		};
 		this.cols.push(col);
 		return col;
 	}
