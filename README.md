@@ -59,9 +59,10 @@ reservation.save();
 ```js
 let reservation = new Reservation();
 reservation.id = 1;
-reservation.populate();
-reservation.occupants = 2;
-reservation.save();
+reservation.populate().then(() => {
+    reservation.occupants = 2;
+    reservation.save();
+});
 ```
 
 ### Getting all rows
@@ -84,7 +85,8 @@ defaultReservation.where('type', '=', 'ROOM').where('paid', '=', true).get().the
 ```js
 let reservation = new Reservation();
 reservation.id = 1;
-reservation.populate();
-reservation.delete();
+reservation.populate().then(() => {
+    reservation.delete();
+});
 ```
  
