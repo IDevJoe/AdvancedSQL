@@ -7,6 +7,9 @@ Since this package is not posted on npm, use `npm i --save idevjoe/advancedsql` 
 ## Known Issues
 - **Babel:** I have found some serious problems with trying to run certain compiled classes that extend `AdvancedSQL.Table`. Compile it with babel at your own risk, but you should be aware that it is a known issue.
 
+### Other bugs
+Since this is fairly new, **please** submit bugs/issues under the issues tab and I'll try my best to fix them.
+
 ## Usage
 
 ### Structures
