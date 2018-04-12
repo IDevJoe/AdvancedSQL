@@ -13,3 +13,12 @@ module.exports.connect = function(connection_options, pool = false) {
 };
 module.exports.Table = require('./Table');
 module.exports.Condition = require('./Condition');
+module.exports.query = function(query, values, callback) {
+    if(callback === undefined) {
+        module.exports.debugLog("Running query: "+query);
+        return module.exports.connection.query(query, values);
+    }
+    module.exports.debugLog("Running query: "+query+" with params "+JSON.stringify(values));
+    return module.exports.connection.query(query, values, callback);
+};
+module.exports.debugLog = function() {};

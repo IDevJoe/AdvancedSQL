@@ -38,15 +38,15 @@ class Table {
                 res(resl);
             };
             if(conditions.length === 0)
-                AdvancedSQL.connection.query("SELECT * FROM "+AdvancedSQL.connection.escapeId(th.name), finishFunction);
+                AdvancedSQL.query("SELECT * FROM "+AdvancedSQL.connection.escapeId(th.name), finishFunction);
             else if(conditions.length === 1)
-                AdvancedSQL.connection.query("SELECT * FROM "+AdvancedSQL.connection.escapeId(th.name)+" WHERE "+conditions[0].toString(th.structure), finishFunction);
+                AdvancedSQL.query("SELECT * FROM "+AdvancedSQL.connection.escapeId(th.name)+" WHERE "+conditions[0].toString(th.structure), finishFunction);
             else {
                 let conditionString = conditions[0].toString(th.structure);
                 for(let i=1;i<conditions.length;i++) {
                     conditionString += " AND "+conditions[i].toString(th.structure);
                 }
-                AdvancedSQL.connection.query("SELECT * FROM "+AdvancedSQL.connection.escapeId(th.name)+" WHERE "+conditionString, finishFunction);
+                AdvancedSQL.query("SELECT * FROM "+AdvancedSQL.connection.escapeId(th.name)+" WHERE "+conditionString, finishFunction);
             }
         });
     }
@@ -54,7 +54,7 @@ class Table {
         let th = this;
         let pk = this.pkey();
         return new Promise(function(res, rej) {
-            AdvancedSQL.connection.query("SELECT * FROM "+AdvancedSQL.connection.escapeId(th.name)+" WHERE "+AdvancedSQL.connection.escapeId(th.pkey().coldata.name)+"=?", [pk.toDB(th[pk.coldata.name])], function(error, results) {
+            AdvancedSQL.query("SELECT * FROM "+AdvancedSQL.connection.escapeId(th.name)+" WHERE "+AdvancedSQL.connection.escapeId(th.pkey().coldata.name)+"=?", [pk.toDB(th[pk.coldata.name])], function(error, results) {
                 if(error) return rej(error);
                 if(results.length !== 1) return res();
                 for(let key of Object.keys(results[0])) {
@@ -87,14 +87,14 @@ class Table {
                 });
                 str1 = "("+str1.substr(2)+")";
                 str2 = "("+str2.substr(2)+")";
-                AdvancedSQL.connection.query("INSERT INTO "+AdvancedSQL.connection.escapeId(th.name)+" "+str1+" VALUES"+str2, finishFunction);
+                AdvancedSQL.query("INSERT INTO "+AdvancedSQL.connection.escapeId(th.name)+" "+str1+" VALUES"+str2, finishFunction);
             } else {
                 let str = "";
                 th.structure.cols.forEach((e) => {
                     str += ", "+AdvancedSQL.connection.escapeId(e.coldata.name)+"="+AdvancedSQL.connection.escape(e.toDB(th[e.coldata.name]));
                 });
                 str = str.substr(2);
-                AdvancedSQL.connection.query("UPDATE "+AdvancedSQL.connection.escapeId(th.name)+" SET "+str+" WHERE "+AdvancedSQL.connection.escapeId(pk.coldata.name)+"=?", [pk.toDB(th[pk.coldata.name])], finishFunction);
+                AdvancedSQL.query("UPDATE "+AdvancedSQL.connection.escapeId(th.name)+" SET "+str+" WHERE "+AdvancedSQL.connection.escapeId(pk.coldata.name)+"=?", [pk.toDB(th[pk.coldata.name])], finishFunction);
             }
         });
     }
@@ -102,7 +102,7 @@ class Table {
         let th = this;
         let pk = this.pkey();
         return new Promise(function(res, rej) {
-            AdvancedSQL.connection.query("DELETE FROM "+AdvancedSQL.connection.escapeId(th.name)+" WHERE "+AdvancedSQL.connection.escapeId(pk.coldata.name)+"=?", [pk.toDB(th[pk.coldata.name])], function(error) {
+            AdvancedSQL.query("DELETE FROM "+AdvancedSQL.connection.escapeId(th.name)+" WHERE "+AdvancedSQL.connection.escapeId(pk.coldata.name)+"=?", [pk.toDB(th[pk.coldata.name])], function(error) {
                 if(error) return rej(error);
                 th.v = false;
                 res();
