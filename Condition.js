@@ -7,8 +7,12 @@ class Condition {
         this.value = value;
     }
 
-    toString() {
-        return `${this.name} ${this.symbol} ${AdvancedSQL.connection.escape(this.value)}`
+    toString(structure) {
+        let th = this;
+        let col = structure.cols.find(function(e) {
+            return e.coldata.name === th.name;
+        });
+        return `${this.name} ${this.symbol} ${AdvancedSQL.connection.escape(col.toDB(this.value))}`
     }
 }
 
